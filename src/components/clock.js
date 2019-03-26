@@ -5,7 +5,7 @@ class Clock extends Component {
       console.log("Clock for",this.props.timezone);
     return (
       <div className="Clock">
-          <p>Clock for {this.props.timezone} timezone</p>
+          <p>{this.props.timezone} {this.props.time}</p>
       </div>
     );
   }

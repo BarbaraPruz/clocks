@@ -4,10 +4,10 @@ Clocks is a React World Clock App.  It lets user see clocks for 1 or more timezo
 
 ## Installation Instructions
 Fork and clone this GIT repo. 
-Set up by running npm install (or yarn)
+Set up by running yarn
 
 ## Running Clocks 
-yarn start (or npm start)
+yarn start 
 
 
 ## Contributing
