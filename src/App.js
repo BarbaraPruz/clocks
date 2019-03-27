@@ -4,6 +4,7 @@ import 'moment-timezone';
 import './App.css';
 
 import Clock from './components/clock';
+import AddClockForm from './components/addclockform';
 
 class App extends Component {
   state = { clocks: [{ timezone: moment.tz.guess(), time: moment.tz(moment(), moment.tz.guess()) }] }; 
@@ -16,8 +17,9 @@ class App extends Component {
     return (
       <div className="App">
           <h1>World Clocks</h1>
+          <AddClockForm />
         <div className="Clocks">
-          { this.state.clocks.map((c,id) => <Clock timezone={c.timezone} time={c.time.format('DD/MM/YYYY HH:MM')} key={id} /> ) }
+          { this.state.clocks.map((c,id) => <Clock timezone={c.timezone} time={c.time.format('DD/MM/YYYY hh:mm')} key={id} /> ) }
         </div>
       </div>
     );
