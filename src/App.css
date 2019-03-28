@@ -24,3 +24,18 @@ code {
   font-size: calc(10px + 2vmin);
   color: white;
 }
+
+/* general clock styling */
+.clock {
+  border-radius: 5px;
+  border: 1px solid white;
+  padding: 30px;
+}
+/* digital clock */
+.digital-clock {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 28px;
+}
+.digital-clock .timezone {
+  font-size: 75%;
+}
