@@ -7,19 +7,39 @@ import Clock from './components/clock';
 import AddClockForm from './components/addclockform';
 
 class App extends Component {
-  state = { clocks: [{ timezone: moment.tz.guess(), time: moment.tz(moment(), moment.tz.guess()) }] }; 
+  state = {
+            count : 0,
+            clocks: [{ timezone: moment.tz.guess(), time: moment.tz(moment(), moment.tz.guess()) }],
+            timerHandle: 0 
+          }; 
+
+  constructor(props) {
+    super(props);
+    this.incrementClocks = this.incrementClocks.bind(this);
+  }
+
+  incrementClocks() {
+    this.state.clocks.forEach( (clock) => {
+      clock.time.add(1,'minute'); 
+    });
+    this.setState({count: this.state.count+1})  // trigger the clock re-rendering  
+  }
+
+  componentDidMount() {
+    let timer = setInterval ( this.incrementClocks, 60000);
+    this.setState( {timerHandle: timer}); 
+  }
+
+  componentWillUnmount(){
+    clearInterval(this.state.timerHandle)
+  }
   render() {
-    // let h= moment.tz(moment(), 'Pacific/Honolulu').format('DD/MM/YYYY HH:MM')
-    // let n= moment.tz(moment(), 'America/New_York').format('DD/MM/YYYY HH:MM')  
-    // let s= moment.tz(moment(), 'Australia/Sydney').format('DD/MM/YYYY HH:MM')          
-    // console.log("hnl",h,'ny',n,'s',s);
-    // console.log('guess',moment.tz.guess())
     return (
       <div className="App">
           <h1>World Clocks</h1>
           <AddClockForm />
         <div className="Clocks">
-          { this.state.clocks.map((c,id) => <Clock timezone={c.timezone} time={c.time.format('DD/MM/YYYY hh:mm')} key={id} /> ) }
+          { this.state.clocks.map((c,id) => <Clock timezone={c.timezone} time={c.time} count={this.state.count} key={id} /> ) }
         </div>
       </div>
     );
