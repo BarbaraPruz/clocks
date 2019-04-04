@@ -1,38 +1,32 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 
 import './App.css';
 
 import Clock from './components/clock';
 import AddClockForm from './components/addclockform';
 
-class App extends Component {
+function App () {
+  // a clock with null name/timezone will result in Clock for local timezone 
+  const [clocks, pushClock] = useState([null]);
 
-  // a clock with null name/timezone will result in Clock for local timezone
-  state = {
-    clocks: [ null],
-  }; 
+  const addClock = (clockParams) => {
+    pushClock([
+      ...clocks,
+      `${clockParams.region}/${clockParams.zone}`
+    ]);    
+  };
 
-  addClock = (clockParams) => {
-    let tz = `${clockParams.region}/${clockParams.zone}` 
-    console.log("Add clock for",tz);
-    this.setState(prevState => ({
-      clocks: [...prevState.clocks, tz]
-    }))
-  }
- 
-  render() {
-    return (
-      <div className="App">
-        <h1>World Clocks</h1>
-        <AddClockForm callback={this.addClock} />
-        <div className="Clocks">
-          { this.state.clocks.map((c,id) => 
-            <Clock {...(c ? {timezone: c} : undefined)} key={id} /> 
-          ) }
-        </div>
+  return (      // render
+    <div className="App">
+      <h1>World Clocks</h1>
+      <AddClockForm callback={addClock} />
+      <div className="Clocks">
+        { clocks.map((c,id) => 
+          <Clock {...(c ? {timezone: c} : undefined)} key={id} /> 
+        ) }
       </div>
-    );
-  }
+    </div>
+  );
 }
 
 export default App;
