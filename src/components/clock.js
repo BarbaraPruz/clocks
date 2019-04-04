@@ -43,7 +43,7 @@ class Clock extends Component {
 
   render() {
     return (
-      <DigitalClock info={this.state.timeFields} />
+      <DigitalClock timeFields={this.state.timeFields} />
     );
   }
 }
