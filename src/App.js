@@ -6,25 +6,20 @@ import Clock from './components/clock';
 import AddClockForm from './components/addclockform';
 
 class App extends Component {
+
   // a clock with null name/timezone will result in Clock for local timezone
   state = {
     clocks: [ null],
   }; 
 
-  constructor(props) {
-    super(props);
-    this.addClock = this.addClock.bind(this);    
-  }
-
-  addClock(clockParams) {
+  addClock = (clockParams) => {
     let tz = `${clockParams.region}/${clockParams.zone}` 
-    console.log("Adding clock for",tz);
+    console.log("Add clock for",tz);
     this.setState(prevState => ({
       clocks: [...prevState.clocks, tz]
     }))
   }
-
-
+ 
   render() {
     return (
       <div className="App">
