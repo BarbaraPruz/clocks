@@ -6,10 +6,10 @@ import Clock from './components/clock';
 import AddClockForm from './components/addclockform';
 
 class App extends Component {
-  // ToDo: use local timezone for initial clock
+  // a clock with null name/timezone will result in Clock for local timezone
   state = {
-            clocks: [ 'Pacific/Honolulu'],
-          }; 
+    clocks: [ null],
+  }; 
 
   constructor(props) {
     super(props);
@@ -23,13 +23,17 @@ class App extends Component {
       clocks: [...prevState.clocks, tz]
     }))
   }
+
+
   render() {
     return (
       <div className="App">
         <h1>World Clocks</h1>
         <AddClockForm callback={this.addClock} />
         <div className="Clocks">
-          { this.state.clocks.map((c,id) => <Clock timezone={c} key={id} /> ) }
+          { this.state.clocks.map((c,id) => 
+            <Clock {...(c ? {timezone: c} : undefined)} key={id} /> 
+          ) }
         </div>
       </div>
     );

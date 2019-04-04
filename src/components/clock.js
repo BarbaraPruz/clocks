@@ -6,18 +6,25 @@ import 'moment-timezone';
 import DigitalClock from './digitalClock';
 
 class Clock extends Component {
+  
+  static defaultProps = {
+    timezone: moment.tz.guess()       
+  };
 
   constructor(props) {
-    super(props)
-    console.log("Clock Constructor",this.props.timezone);
+    super(props);
 
-    let temp = moment.tz(moment(), this.props.timezone);   
+    console.log("Clock Constructor",this.props.timezone);
+    let temp = moment.tz(moment(), this.props.timezone);
     this.state = {
       time: temp,
       timeFields: this._getFields(temp), 
       timeHandle: 0
     }
-
+    // because increment clock is used repetitively, choosing
+    // not to make it an arrow function.  If arrow function,
+    // each time browser needs to execute, it will create a 
+    // new function object
     this.incrementClock = this.incrementClock.bind(this);    
   }
 
