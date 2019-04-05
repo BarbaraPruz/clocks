@@ -20,7 +20,7 @@ function App () {
     <div className="App">
       <h1>World Clocks</h1>
       <AddClockForm callback={addClock} />
-      <div className="Clocks">
+      <div className="clocks">
         { clocks.map((c,id) => 
           <Clock {...(c ? {timezone: c} : undefined)} key={id} /> 
         ) }

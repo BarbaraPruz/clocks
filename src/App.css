@@ -16,20 +16,25 @@ code {
 .App {
   text-align: center;
   background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  min-height: 100vh; 
   font-size: calc(10px + 2vmin);
   color: white;
 }
+
+.clocks {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 320px);
+  grid-gap: 1em;
+  justify-content: center;
+  margin-top: 2em;
+}
+
 
 /* general clock styling */
 .clock {
   border-radius: 5px;
   border: 1px solid white;
-  padding: 30px;
+  padding: 30px; 
 }
 /* digital clock */
 .digital-clock {
@@ -38,7 +43,7 @@ code {
 }
 .digital-clock .time {
   font-size: 110%;
-  margin-bottom: 2px;
+  margin-bottom: 2px; 
 }
 .digital-clock .date {
   font-size: 40%;
