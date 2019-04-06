@@ -32,14 +32,16 @@ code {
 
 /* general clock styling */
 .clock {
-  border-radius: 5px;
-  border: 1px solid white;
+  border-radius: 10px;
+  border: 4px solid white;
   padding: 30px; 
 }
 /* digital clock */
 .digital-clock {
   font-family: 'Share Tech Mono', monospace;
   font-size: 28px;
+  background-color: #61DAFB;
+  color: #282c34;
 }
 .digital-clock .time {
   font-size: 110%;

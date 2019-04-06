@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-// TODO: limit moment to a single component?
+
 import moment from 'moment';
 import 'moment-timezone';
 
@@ -16,35 +16,34 @@ class AddClockForm extends Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
-  _getInfo(momentTz) {
-    let s=momentTz.split('/');
-    if (s.length < 2) 
-      return false;
-    return { region: s[0], name: s[1] }
-  }
-
   componentDidMount() {
+    let tz = moment.tz.names();
+    let tzlist=[];
+    let i = 0;
+
     // get timezone name list and process
     //   output is [ {region: xxx, timezones:[]}, {region: xxx, timezones:[]}...] 
-    // TODO: streamline this code!  
-    let tz = moment.tz.names();
-    let tzlist=[ { region: '', names:[] }];
-    let i = 0; 
-    let j = 0;
-    while (i<tz.length) {
-      let timezone = this._getInfo(tz[i]);
-      if (timezone) {
-        if (timezone.region === tzlist[j].region)
-          tzlist[j].names.push(timezone.name)
-        else {
-          ++j;
-          tzlist[j] = { region: timezone.region, names:[timezone.name]}
-        }
-      }
-      ++i;
+    function getRegion(momentTz) {
+      return momentTz.substr(0, momentTz.indexOf('/'))
+    } 
+    function getName(momentTz) {
+      return momentTz.substr(momentTz.indexOf('/')+1)
     }
-    tzlist.shift();
-    this.setState({timezones: tzlist});    
+
+    while (i < tz.length) {
+      let currentRegion = getRegion(tz[i]);
+      if (!currentRegion) 
+        ++i;
+      else {
+        let names=[]
+        while ( (getRegion(tz[i]) === currentRegion) &&  (i<tz.length)) {
+          names.push(getName(tz[i]))
+          ++i;
+        }
+        tzlist.push({region: currentRegion, names:names})
+      }
+    }
+    this.setState({timezones: tzlist});  
   }
 
   handleChange(event){
@@ -54,8 +53,9 @@ class AddClockForm extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    // TODO: only call cb if zone + region really selected
-    this.props.callback({region: this.state.selectedRegion, zone: this.state.selectedZone});
+    if ((this.state.selectedRegion.length > 0) && (this.state.selectedZone.length > 0)) {
+      this.props.callback({region: this.state.selectedRegion, zone: this.state.selectedZone});
+    }
   }
 
   render() {
