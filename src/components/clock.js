@@ -1,58 +1,42 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import moment from 'moment';
 import 'moment-timezone';
 
 import DigitalClock from './digitalClock';
 
-class Clock extends Component {
-  
-  static defaultProps = {
-    timezone: moment.tz.guess()       
-  };
+function Clock ({timezone}) {
 
-  constructor(props) {
-    super(props);
+  // to keep the same moment time object and interval timer between renders,
+  // these values are saved in the state
+  const [time, setTime] = useState(moment.tz(moment(), timezone));
+  const [timerHandle, setTimerHandle] = useState(0);
+  const [timeFields, updateTimeFields] = useState(_getFields(time));
 
-    console.log("Clock Constructor",this.props.timezone);
-    let temp = moment.tz(moment(), this.props.timezone);
-    this.state = {
-      time: temp,
-      timeFields: this._getFields(temp), 
-      timeHandle: 0
-    }
-    // because increment clock is used repetitively, choosing
-    // not to make it an arrow function.  If arrow function,
-    // each time browser needs to execute, it will create a 
-    // new function object
-    this.incrementClock = this.incrementClock.bind(this);    
-  }
-
-  _getFields(t) {   // return hash of formatted time fields for a moment
+  function _getFields(t) {   // return hash of formatted time fields for a moment
     return { year: t.year(), month: t.month(), day: t.day(),
              hour: t.hour(), minute: t.minute(), timezone: t.tz()} 
   }
 
-  componentDidMount() {
-    let timer = setInterval ( this.incrementClock, 60000);
-    this.setState( {timerHandle: timer}); 
-  }  
+  // useEffect hook: the [] arg is used so useEffect will only be called at
+  // component mount/unmount times.
+  useEffect(() => {
+      setTimerHandle(setInterval ( ()=>{
+        time.add(1,'minute'); 
+        updateTimeFields(_getFields(time));  
+      }, 60000));
+      return () => {
+        console.log("Clock ",time.tz(),"unmounting");
+        clearInterval(timerHandle);      
+    }}, [])
 
-  incrementClock() {
-    this.state.time.add(1,'minute'); 
-    this.setState( { timeFields: this._getFields(this.state.time) });  
-  }
+  return (
+      <DigitalClock timeFields={timeFields} />
+  );
+}  
 
-  componentWillUnmount(){
-     clearInterval(this.state.timerHandle)
-  }
+Clock.defaultProps = {
+  timezone: moment.tz.guess()   
+};
 
-
-  render() {
-    return (
-      <DigitalClock timeFields={this.state.timeFields} />
-    );
-  }
-}
-
-export default Clock;
+export default Clock; 
