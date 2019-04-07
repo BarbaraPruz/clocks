@@ -21,6 +21,7 @@ function Clock ({timezone}) {
   // useEffect hook: the [] arg is used so useEffect will only be called at
   // component mount/unmount times.
   useEffect(() => {
+    console.log("setting timer",timerHandle);
       setTimerHandle(setInterval ( ()=>{
         time.add(1,'minute'); 
         updateTimeFields(_getFields(time));  

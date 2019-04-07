@@ -3,26 +3,29 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import 'moment-timezone';
 
+import SelectInput from './selectinput';
+
 class AddClockForm extends Component {
   state = {
-    timezones: [ {region:" ", names:[]}],
+    timezones: null,
     selectedZone: '',
-    selectedRegion: ''
+    selectedRegion: 'US'
   }; 
 
   constructor(props) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleChange = this.handleChange.bind(this);
+    this.handleRegionChange = this.handleRegionChange.bind(this);
+    this.handleZoneChange = this.handleZoneChange.bind(this); 
   }
 
   componentDidMount() {
     let tz = moment.tz.names();
-    let tzlist=[];
+    let tzlist={};
     let i = 0;
 
     // get timezone name list and process
-    //   output is [ {region: xxx, timezones:[]}, {region: xxx, timezones:[]}...] 
+    //   output is hash where each key is a region (ex. Africa) and value is array of timezones
     function getRegion(momentTz) {
       return momentTz.substr(0, momentTz.indexOf('/'))
     } 
@@ -40,40 +43,50 @@ class AddClockForm extends Component {
           names.push(getName(tz[i]))
           ++i;
         }
-        tzlist.push({region: currentRegion, names:names})
+        tzlist[currentRegion] = names;
       }
     }
     this.setState({timezones: tzlist});  
   }
 
-  handleChange(event){
-    let region = event.target.options[event.target.selectedIndex].parentNode.label;
-    this.setState({selectedZone: event.target.value, selectedRegion: region});
+  handleRegionChange(event) {
+    let region = event.target.value;
+    this.setState({selectedRegion: region});
+  }
+
+  handleZoneChange(event){
+    this.setState({selectedZone: event.target.value});
   }
 
   handleSubmit(e) {
     e.preventDefault();
-    if ((this.state.selectedRegion.length > 0) && (this.state.selectedZone.length > 0)) {
+    if (this.state.selectedZone.length > 0) {
       this.props.callback({region: this.state.selectedRegion, zone: this.state.selectedZone});
     }
+  }
+
+  buildform() {
+    if (this.state.timezones) {
+      return (
+        <form onSubmit={this.handleSubmit}>
+          <select id="region" onChange={this.handleRegionChange} defaultValue={this.state.selectedRegion}>
+            { Object.keys(this.state.timezones).map( (r) =>
+              <option key={r}>{r}</option>
+            )}
+          </select>
+          <SelectInput cb={this.handleZoneChange} opts={this.state.timezones[this.state.selectedRegion]} />
+          <input type="submit" value="Add Clock" />
+        </form>
+      )
+    }
+    return null;
   }
 
   render() {
     return (
       <div className="AddClockForm">
           <p>Add Clock Form</p>
-          <form onSubmit={this.handleSubmit}>
-            <select id="optionList" onChange={this.handleChange}>
-              {this.state.timezones.map ( (r,index) =>
-                <optgroup key={index} label={r.region}>
-                  {r.names.map ((n,index) =>
-                    <option key={index}>{n}</option>
-                  )}
-                </optgroup>
-              )}
-            </select>
-            <input type="submit" value="Add Clock" />
-          </form>
+          { this.buildform()}
       </div>
     );
   }
