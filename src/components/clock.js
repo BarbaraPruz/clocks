@@ -14,7 +14,7 @@ function Clock ({timezone}) {
   const [timeFields, updateTimeFields] = useState(_getFields(time));
 
   function _getFields(t) {   // return hash of formatted time fields for a moment
-    return { year: t.year(), month: t.month(), day: t.day(),
+    return { year: t.year(), month: t.month()+1, day: t.date(),
              hour: t.hour(), minute: t.minute(), timezone: t.tz()} 
   }
 

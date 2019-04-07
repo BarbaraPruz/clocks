@@ -8,8 +8,8 @@ import SelectInput from './selectinput';
 class AddClockForm extends Component {
   state = {
     timezones: null,
-    selectedZone: '',
-    selectedRegion: 'US',
+    selectedZone: 'GMT',
+    selectedRegion: 'Etc',
     showForm: false
   }; 
 
@@ -53,7 +53,7 @@ class AddClockForm extends Component {
 
   handleRegionChange(event) {
     let region = event.target.value;
-    this.setState({selectedRegion: region});
+    this.setState({selectedRegion: region, selectedZone: this.state.timezones[region][0]});
   }
 
   handleZoneChange(event){
@@ -62,9 +62,7 @@ class AddClockForm extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    if (this.state.selectedZone.length > 0) {
-      this.props.callback({region: this.state.selectedRegion, zone: this.state.selectedZone});
-    }
+    this.props.callback({region: this.state.selectedRegion, zone: this.state.selectedZone});
     this.toggleForm();
   }
 
