@@ -53,3 +53,8 @@ code {
 .digital-clock .timezone {
   font-size: 70%;
 }
+
+/* form */
+select {
+  margin-right: 1.5em;
+}

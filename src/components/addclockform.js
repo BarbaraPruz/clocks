@@ -9,14 +9,16 @@ class AddClockForm extends Component {
   state = {
     timezones: null,
     selectedZone: '',
-    selectedRegion: 'US'
+    selectedRegion: 'US',
+    showForm: false
   }; 
 
   constructor(props) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleRegionChange = this.handleRegionChange.bind(this);
-    this.handleZoneChange = this.handleZoneChange.bind(this); 
+    this.handleZoneChange = this.handleZoneChange.bind(this);
+    this.toggleForm = this.toggleForm.bind(this); 
   }
 
   componentDidMount() {
@@ -63,10 +65,11 @@ class AddClockForm extends Component {
     if (this.state.selectedZone.length > 0) {
       this.props.callback({region: this.state.selectedRegion, zone: this.state.selectedZone});
     }
+    this.toggleForm();
   }
 
   buildform() {
-    if (this.state.timezones) {
+    if ( this.state.showForm ) {
       return (
         <form onSubmit={this.handleSubmit}>
           <select id="region" onChange={this.handleRegionChange} defaultValue={this.state.selectedRegion}>
@@ -82,11 +85,20 @@ class AddClockForm extends Component {
     return null;
   }
 
+  getButton() {
+    if (!this.state.showForm) 
+      return <button onClick={this.toggleForm}>Add Clock</button>
+    return null;
+  }
+  toggleForm() {
+    this.setState({ showForm: !(this.state.showForm) });
+  }
+
   render() {
     return (
       <div className="AddClockForm">
-          <p>Add Clock Form</p>
-          { this.buildform()}
+          { this.buildform() }
+          { this.getButton() }
       </div>
     );
   }
