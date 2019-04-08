@@ -1,27 +1,24 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import moment from 'moment';
 import 'moment-timezone';
 
 import SelectInput from './selectinput';
+// ToDo: break this up into more maintainable pieces.
+function AddClockForm(props) {
 
-class AddClockForm extends Component {
-  state = {
-    timezones: null,
-    selectedZone: 'GMT',
-    selectedRegion: 'Etc',
-    showForm: false
-  }; 
+  const [timezones, storeTimezones] = useState(null);
+  const [selectedZone, setZone] = useState('GMT');
+  const [selectedRegion, setRegion] = useState('Etc');
+  const [showForm, setShowForm] = useState(false);
 
-  constructor(props) {
-    super(props);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleRegionChange = this.handleRegionChange.bind(this);
-    this.handleZoneChange = this.handleZoneChange.bind(this);
-    this.toggleForm = this.toggleForm.bind(this); 
-  }
+  // setting up the timezone list (based on what moment.tz lib will support)
+  // This is done at "componentDidMount" time by using useEffect hook with [] param
+  useEffect(() => {
+    storeTimezones(buildTimezoneList());  
+  }, [])
 
-  componentDidMount() {
+  function buildTimezoneList() {
     let tz = moment.tz.names();
     let tzlist={};
     let i = 0;
@@ -48,58 +45,53 @@ class AddClockForm extends Component {
         tzlist[currentRegion] = names;
       }
     }
-    this.setState({timezones: tzlist});  
+
+    return tzlist;
   }
 
-  handleRegionChange(event) {
-    let region = event.target.value;
-    this.setState({selectedRegion: region, selectedZone: this.state.timezones[region][0]});
+  // form event handlers
+  const handleRegionChange = (event) => {
+    setRegion(event.target.value);
+    setZone(timezones[selectedRegion][0]);
   }
 
-  handleZoneChange(event){
-    this.setState({selectedZone: event.target.value});
+  const handleZoneChange = (event) => setZone(event.target.value);
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    props.callback({region: selectedRegion, zone: selectedZone});
+    toggleForm();
   }
 
-  handleSubmit(e) {
-    e.preventDefault();
-    this.props.callback({region: this.state.selectedRegion, zone: this.state.selectedZone});
-    this.toggleForm();
-  }
+  const toggleForm = () => setShowForm(!showForm);
 
-  buildform() {
-    if ( this.state.showForm ) {
-      return (
-        <form onSubmit={this.handleSubmit}>
-          <select id="region" onChange={this.handleRegionChange} defaultValue={this.state.selectedRegion}>
-            { Object.keys(this.state.timezones).map( (r) =>
-              <option key={r}>{r}</option>
-            )}
-          </select>
-          <SelectInput cb={this.handleZoneChange} opts={this.state.timezones[this.state.selectedRegion]} />
-          <input type="submit" value="Add Clock" />
-        </form>
-      )
-    }
-    return null;
-  }
-
-  getButton() {
-    if (!this.state.showForm) 
-      return <button onClick={this.toggleForm}>Add Clock</button>
-    return null;
-  }
-  toggleForm() {
-    this.setState({ showForm: !(this.state.showForm) });
-  }
-
-  render() {
+  // helper functions for rendering component
+  function buildform() {
+    if (!showForm ) return null;
     return (
-      <div className="AddClockForm">
-          { this.buildform() }
-          { this.getButton() }
-      </div>
-    );
+      <form onSubmit={handleSubmit}>
+        <select id="region" onChange={handleRegionChange} defaultValue={selectedRegion}>
+          { Object.keys(timezones).map( (r) =>
+            <option key={r}>{r}</option>
+          )}
+        </select>
+        <SelectInput cb={handleZoneChange} opts={timezones[selectedRegion]} />
+        <input type="submit" value="Add Clock" />
+      </form>
+    )
   }
+
+  function getButton() {
+    if (showForm) return null; 
+    return <button onClick={toggleForm}>Add Clock</button>
+  }
+
+  return (
+    <div className="AddClockForm">
+      { buildform() }
+      { getButton() }
+    </div>
+  );
 }
 
 export default AddClockForm;
