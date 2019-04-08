@@ -51,8 +51,9 @@ function AddClockForm(props) {
 
   // form event handlers
   const handleRegionChange = (event) => {
-    setRegion(event.target.value);
-    setZone(timezones[selectedRegion][0]);
+    let region = event.target.value;
+    setRegion(region);
+    setZone(timezones[region][0]);
   }
 
   const handleZoneChange = (event) => setZone(event.target.value);
