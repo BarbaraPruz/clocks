@@ -70,7 +70,7 @@ function AddClockForm(props) {
     if (!showForm ) return null;
     return (
       <form onSubmit={handleSubmit}>
-        <select id="region" onChange={handleRegionChange} defaultValue={selectedRegion}>
+        <select id="region" onChange={handleRegionChange} defaultValue={selectedRegion} className="rounded">
           { Object.keys(timezones).map( (r) =>
             <option key={r}>{r}</option>
           )}
