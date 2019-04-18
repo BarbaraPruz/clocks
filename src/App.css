@@ -27,10 +27,24 @@ body {
 
 
 /* general clock styling */
+.clock-container {
+background-color: inherit; /* #596273;*/
+padding: 2px;
+text-align: right; /* for delete button. */
+} 
+.btn {
+  background-color: inherit;
+  border: none; 
+  color: white; /* White text */
+  /* padding: 12px 16px; 
+  font-size: 16px; */
+  cursor: pointer; /* Mouse pointer on hover */
+}
 .clock {
   border-radius: 10px;
   border: 4px solid white;
   padding: 30px; 
+  margin: auto;
 }
 /* digital clock */
 .digital-clock {
