@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
 import moment from 'moment';
 import 'moment-timezone';
@@ -6,42 +7,35 @@ import 'moment-timezone';
 import DigitalClock from './digitalClock';
 
 function Clock({ timezone, id, deleteCallback }) {
-  // why 2 state variables related to time?   time is a moment object and knows
-  // about incrementing time, timezones, etc.   But when time.add() is called,
-  // the object reference doesn't change.
-  // Strategy was to keep moment.js to minimal components and so Digital Clock
-  // doesn't know about moment - it just knows about time/date fields.  So
-  // those are kept separately to force re-rendering.
-  // Alternative approaches: (1) DigitalClock gets moment object.  (2) use react forceUpdate
-  const [time, setTime] = useState(moment.tz(moment(), timezone));
-  const [timeFields, updateTimeFields] = useState(_getFields(time));
+  function now() { return moment.tz(moment(), timezone);}
 
-  function _getFields(t) { // return hash of formatted time fields for a moment
-    return {
+  const getFields = (t) => ( // return hash of formatted time fields for a moment
+    {
       year: t.year(),
       month: t.month() + 1,
       day: t.date(),
       hour: t.hour(),
       minute: t.minute(),
       timezone: t.tz(),
-    };
-  }
+    }
+  );
 
-  // useEffect hook: the [] arg is used so useEffect will only be called at
-  // component mount/unmount times.
+  const [timeFields, updateTimeFields] = useState(getFields(now()));
+
   useEffect(() => {
     const timer = window.setInterval(() => {
-      time.add(1, 'minute');
-      updateTimeFields(_getFields(time));
+      updateTimeFields({ ...getFields(moment.tz(moment(), timezone)) });
     }, 60000);
     return () => {
       clearInterval(timer);
     };
-  }, []);
+  }, [timezone]);
 
   return (
     <div className="clock-container">
-      <button className="btn" onClick={() => deleteCallback(id)}><i className="fa fa-close" /></button>
+      <button type="button" className="clock-btn" onClick={() => deleteCallback(id)}>
+        <i className="fa fa-close" />
+      </button>
       <DigitalClock timeFields={timeFields} />
     </div>
   );
@@ -49,6 +43,12 @@ function Clock({ timezone, id, deleteCallback }) {
 
 Clock.defaultProps = {
   timezone: moment.tz.guess(),
+};
+
+Clock.propTypes = {
+  timezone: PropTypes.string,
+  id: PropTypes.string.isRequired,
+  deleteCallback: PropTypes.func.isRequired,
 };
 
 export default Clock;

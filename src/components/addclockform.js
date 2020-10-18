@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
 import moment from 'moment';
 import 'moment-timezone';
 
-import SelectInput from './selectinput';
-// ToDo: break this up into more maintainable pieces.
-function AddClockForm(props) {
+function AddClockForm({ handleAddClock }) {
   const [timezones, storeTimezones] = useState(null);
-  const [selectedZone, setZone] = useState('GMT');
-  const [selectedRegion, setRegion] = useState('Etc');
+  const [selectedZone, setZone] = useState('Pacific');
+  const [selectedRegion, setRegion] = useState('US');
   const [showForm, setShowForm] = useState(false);
 
   function buildTimezoneList() {
@@ -27,11 +26,11 @@ function AddClockForm(props) {
 
     while (i < tz.length) {
       const currentRegion = getRegion(tz[i]);
-      if (!currentRegion) { ++i; } else {
+      if (!currentRegion) { ++i; } else { // eslint-disable-line no-plusplus
         const names = [];
         while ((getRegion(tz[i]) === currentRegion) && (i < tz.length)) {
           names.push(getName(tz[i]));
-          ++i;
+          ++i; // eslint-disable-line no-plusplus
         }
         tzlist[currentRegion] = names;
       }
@@ -41,7 +40,6 @@ function AddClockForm(props) {
   }
 
   // setting up the timezone list (based on what moment.tz lib will support)
-  // This is done at "componentDidMount" time by using useEffect hook with [] param
   useEffect(() => {
     storeTimezones(buildTimezoneList());
   }, []);
@@ -59,35 +57,34 @@ function AddClockForm(props) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    props.callback({ region: selectedRegion, zone: selectedZone });
+    handleAddClock({ region: selectedRegion, zone: selectedZone });
     toggleForm();
   };
 
   // helper functions for rendering component
-  function buildform() {
-    if (!showForm) return null;
-    return (
-      <form onSubmit={handleSubmit}>
-        <select id="region" onChange={handleRegionChange} defaultValue={selectedRegion} className="rounded">
-          {Object.keys(timezones).map((r) => <option key={r}>{r}</option>)}
-        </select>
-        <SelectInput cb={handleZoneChange} opts={timezones[selectedRegion]} />
-        <input type="submit" value="Add Clock" />
-      </form>
-    );
-  }
+  const getForm = () => (
+    <form onSubmit={handleSubmit}>
+      <select id="region" onChange={handleRegionChange} defaultValue={selectedRegion} className="rounded">
+        {Object.keys(timezones).map((r) => <option key={r}>{r}</option>)}
+      </select>
+      <select id="zone" onChange={handleZoneChange} defaultValue={selectedZone} className="rounded">
+        {timezones[selectedRegion].map((opt) => <option key={`${opt}`}>{opt}</option>)}
+      </select>
+      <input type="submit" value="Add Clock" />
+    </form>
+  );
 
-  function getButton() {
-    if (showForm) return null;
-    return <button onClick={toggleForm}>Add Clock</button>;
-  }
+  const getButton = () => <button type="button" onClick={toggleForm}>Add Clock</button>;
 
   return (
     <div className="AddClockForm">
-      { buildform()}
-      { getButton()}
+      { showForm ? getForm() : getButton()}
     </div>
   );
 }
+
+AddClockForm.propTypes = {
+  handleAddClock: PropTypes.func.isRequired,
+};
 
 export default AddClockForm;

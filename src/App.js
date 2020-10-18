@@ -32,19 +32,19 @@ function App() {
     dispatch({ type: 'delete', payload: { id } });
   };
 
-  return ( // render
+  return (
     <div className="App">
       <h1>World Clocks</h1>
-      <AddClockForm callback={addClock} />
+      <AddClockForm handleAddClock ={addClock} />
       <div className="clocks">
-        { clocks.map((c) => (
+        {clocks.map((c) => (
           <Clock
-            {...(c.timezone ? { timezone: c.timezone } : undefined)}
+            timezone={c.timezone || undefined}
             key={c.id}
             id={c.id}
             deleteCallback={deleteClock}
           />
-        )) }
+        ))}
       </div>
     </div>
   );
