@@ -1,24 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 
-import moment from 'moment';
-import 'moment-timezone';
+import moment from "moment";
+import "moment-timezone";
 
-import DigitalClock from './digitalClock';
+import DigitalClock from "./digitalClock";
 
 function Clock({ timezone, id, deleteCallback }) {
-  function now() { return moment.tz(moment(), timezone);}
+  function now() {
+    return moment.tz(moment(), timezone);
+  }
 
-  const getFields = (t) => ( // return hash of formatted time fields for a moment
-    {
-      year: t.year(),
-      month: t.month() + 1,
-      day: t.date(),
-      hour: t.hour(),
-      minute: t.minute(),
-      timezone: t.tz(),
-    }
-  );
+  const getFields = (
+    t // return hash of formatted time fields for a moment
+  ) => ({
+    year: t.year(),
+    month: t.month() + 1,
+    day: t.date(),
+    hour: t.hour(),
+    minute: t.minute(),
+    timezone: t.tz(),
+  });
 
   const [timeFields, updateTimeFields] = useState(getFields(now()));
 
@@ -33,7 +35,12 @@ function Clock({ timezone, id, deleteCallback }) {
 
   return (
     <div className="clock-container">
-      <button type="button" className="clock-btn" onClick={() => deleteCallback(id)}>
+      <button
+        aria-label="close clock"
+        type="button"
+        className="clock-btn"
+        onClick={() => deleteCallback(id)}
+      >
         <i className="fa fa-close" />
       </button>
       <DigitalClock timeFields={timeFields} />
